@@ -23,6 +23,7 @@ async function connectToDatabase() {
         // You can add additional code to work with the database here if needed.
         const db = client.db(databaseName)
         const collection = db.collection('users')
+        const collectionTasks = db.collection('tasks')
         
 
         // const result = await collection.insertOne({
@@ -30,18 +31,43 @@ async function connectToDatabase() {
         //     age: 24
         // })
 
-        const result = await collection.insertMany([
-            {
-                name: 'Sajid',
-                age: 26
-            },
-            {
-                name: 'wasif',
-                age: 28
-            }
-        ])
+        // const result = await collection.insertMany([
+        //     {
+        //         name: 'Sajid',
+        //         age: 26
+        //     },
+        //     {
+        //         name: 'wasif',
+        //         age: 28
+        //     }
+        // ])
 
-        console.log(result)
+        // const result = await collectionTasks.insertMany([
+        //     {
+        //         description: 'Clean the house',
+        //         completed: true
+        //     },
+        //     {
+        //         description: 'Renew inspection',
+        //         completed: false
+        //     },
+        //     {
+        //         description: 'Pot Plants',
+        //         completed: false
+        //     }
+        // ])
+
+        // console.log(result)
+
+        const result = await collection.findOne({name: "sajid"})
+
+        if (result)
+        {
+            console.log("User Found", result)
+        } else 
+        {
+            console.log("User not found")
+        }
         client.close(); // Close the connection when done.
     } catch (error) {
         console.error('Unable to connect to database:', error);
