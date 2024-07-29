@@ -1,0 +1,2 @@
+- To start the database run this command in the terminal: /Users/user/mongodb/bin/mongod.exe --dbpath=/Users/user/mongodb-data
+- after that go to studio 3T and connect your database
