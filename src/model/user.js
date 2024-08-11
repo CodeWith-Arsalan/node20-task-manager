@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Task = require('../model/task')
 
 //To add a middleware to let happen pre and post working like pre for password hashing
 const userSchema = new mongoose.Schema({
@@ -53,8 +54,27 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }]
+}, {
+    timestamps: true
 })
 
+//Creating a virtual relationship of user with task for mongoose
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+// Creating a method to hide the array of tokens and passowrd to be visible
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.tokens
+    delete userObject.password
+
+    return userObject
+}
 //Creating method to generate auth token for user at the time of login this user methods because we are using instance of model
 userSchema.methods.generateAuthTokens = async function(){
     const user = this
@@ -89,7 +109,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
 }
 
-//Hash the plain text password before saving
+//middleware Hash the plain text password before saving
 userSchema.pre('save', async function (next) {
     const user = this
     console.log('just before saving')
@@ -99,6 +119,13 @@ userSchema.pre('save', async function (next) {
     next()
     }
 
+})
+
+//Middleware Delete user tasks when user is removed
+userSchema.pre('deleteOne', async function (next){
+    const user = this
+    await Task.deleteMany({owner: user._id})
+    next()
 })
 
 const User = mongoose.model('User', userSchema)
