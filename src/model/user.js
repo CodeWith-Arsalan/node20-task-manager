@@ -81,7 +81,7 @@ userSchema.methods.toJSON = function () {
 //Creating method to generate auth token for user at the time of login this user methods because we are using instance of model
 userSchema.methods.generateAuthTokens = async function(){
     const user = this
-    const token = jwt.sign({_id: user._id.toString()}, "thisisthesecretsignature")
+    const token = jwt.sign({_id: user._id.toString()}, process.env.JWT_SECRET)
 
     //to save token on the database with the user data
     user.tokens = user.tokens.concat({token})
